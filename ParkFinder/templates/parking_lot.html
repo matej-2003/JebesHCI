@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}History - Map App{% endblock %}
+
+{% block extra_css %}
+<style>
+	.vacancy {
+		width: -webkit-fill-available;
+	}
+
+	.message {
+		color: red;
+		margin-top: 10px;
+	}
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container_div">
+	<center>
+		<h3>Parking Lot Details</h3>
+	</center>
+</div>
+<div class="container_div">
+	<div id="parking-container"></div>
+	<img class="vacancy" src="{{ url_for('static', filename='parkinglot.png') }}" alt="">
+	<!-- Raised button with ripple -->
+	<hr>
+	<center>
+		<button id="reserve-button"
+			class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
+			Reserve 1 Spot
+		</button>
+		<!-- Button to redirect to reservations page -->
+		<button id="view-reservations-button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+			View Reservations
+		</button>
+		<!-- Message for existing reservation -->
+		<div id="reservation-message" class="message"></div>
+	</center>
+	<br>
+	<br>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+	const seed = {{ id }}; // Any number input
+	const parkingInfo = generateParkingInfo(seed); // Use the previous function to generate data
+	const parkingHtml = displayParkingInfo(parkingInfo);
+
+	// Insert the HTML into the document (e.g., into a div with id "parking-container")
+	document.getElementById("parking-container").innerHTML = parkingHtml;
+
+	// Check if there is an existing reservation
+	const reservedParkingId = localStorage.getItem("reservedParkingId");
+	const reserveButton = document.getElementById("reserve-button");
+	const viewReservationsButton = document.getElementById("view-reservations-button");
+	const reservationMessage = document.getElementById("reservation-message");
+
+	if (reservedParkingId) {
+		// Disable the "Reserve 1 Spot" button
+		reserveButton.disabled = true;
+
+		// Display a message
+		reservationMessage.textContent = "You must cancel or finish your previous reservation before making a new one.";
+	}
+
+	// Add event listener to the "Reserve 1 Spot" button
+	reserveButton.addEventListener("click", () => {
+		// Save the parking ID to localStorage
+		localStorage.setItem("reservedParkingId", seed);
+		localStorage.setItem("reservationTime", new Date().toISOString());
+
+		// Redirect to the reservations page
+		window.location.href = "{{ url_for('reservations') }}";
+	});
+
+	// Add event listener to the "View Reservations" button
+	viewReservationsButton.addEventListener("click", () => {
+		// Redirect to the reservations page
+		window.location.href = "{{ url_for('reservations') }}";
+	});
+</script>
+{% endblock extra_js %}

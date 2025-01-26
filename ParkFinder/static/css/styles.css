@@ -1,0 +1,94 @@
+:root {
+	/* Primary Colors */
+	--primary-blue: #7373f5;
+	/* Primary buttons, headers, and key accents */
+	--accent-teal: #2BBBAD;
+	/* Backgrounds, neutral spaces */
+
+	/* Neutral Colors */
+	--soft-gray: #F5F5F5;
+	/* Text, borders, and dark elements */
+	--dark-gray: #333333;
+	/* Light backgrounds and cards */
+	--warm-white: #F9F9F9;
+	/* Secondary buttons, highlights */
+
+	/* Status Colors */
+	--alert-red: #FF5252;
+	/* Errors, warnings, and alerts */
+	--success-green: #4CAF50;
+	/* Success messages and confirmations */
+}
+
+/* General Styles */
+body {
+	margin: 0;
+	font-family: 'Roboto', sans-serif;
+	background-color: var(--soft-gray);
+	color: var(--dark-gray);
+}
+
+/* Bottom Menu */
+.bottom-menu {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: var(--warm-white);
+	box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+	padding: 10px 0;
+}
+
+.bottom-menu a {
+	text-decoration: none;
+	color: var(--primary-blue);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.bottom-menu a i {
+	font-size: 24px;
+}
+
+.bottom-menu a span {
+	font-size: 14px;
+}
+
+
+/* Map Widget */
+#map-container {
+	height: calc(100vh - 120px);
+	/* Full height minus search bar and bottom menu */
+	width: 100%;
+}
+
+/* Profile Page */
+.container_div {
+	padding: 10px;
+	background-color: var(--warm-white);
+	border-radius: 8px;
+	margin: 10px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+	.search-bar {
+		padding: 8px;
+	}
+
+	#search-input {
+		padding: 8px;
+	}
+
+	.bottom-menu a span {
+		font-size: 12px;
+	}
+
+	.bottom-menu a i {
+		font-size: 20px;
+	}
+}

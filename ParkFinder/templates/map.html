@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Map - Map App{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+
+<style>
+	body {
+		padding-top: 20px;
+		padding-left: 20px;
+		box-sizing: border-box;
+	}
+
+	.mdl-dialog {
+		border: none;
+		box-shadow: 0 9px 46px 8px rgba(0, 0, 0, 0.14), 0 11px 15px -7px rgba(0, 0, 0, 0.12), 0 24px 38px 3px rgba(0, 0, 0, 0.2);
+		width: 280px;
+	}
+
+	.mdl-dialog__title {
+		padding: 24px 24px 0;
+		margin: 0;
+		font-size: 2.5rem;
+	}
+
+	.mdl-dialog__actions {
+		padding: 8px 8px 8px 24px;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-flex-direction: row-reverse;
+		-ms-flex-direction: row-reverse;
+		flex-direction: row-reverse;
+		-webkit-flex-wrap: wrap;
+		-ms-flex-wrap: wrap;
+		flex-wrap: wrap;
+	}
+
+	.mdl-dialog__actions>* {
+		margin-right: 8px;
+		height: 36px;
+	}
+
+	.mdl-dialog__actions>*:first-child {
+		margin-right: 0;
+	}
+
+	.mdl-dialog__actions--full-width {
+		padding: 0 0 8px 0;
+	}
+
+	.mdl-dialog__actions--full-width>* {
+		height: 48px;
+		-webkit-flex: 0 0 100%;
+		-ms-flex: 0 0 100%;
+		flex: 0 0 100%;
+		padding-right: 16px;
+		margin-right: 0;
+		text-align: right;
+	}
+
+	.mdl-dialog__content {
+		padding: 20px 24px 24px 24px;
+		color: rgba(0, 0, 0, 0.54);
+	}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Search Bar -->
+<div class="search-bar">
+	<input type="search" id="search-input" placeholder="Search for a location...">
+	<button id="search-button"><i class="material-icons">search</i></button>
+	<!-- Suggestions Dropdown -->
+	<div id="suggestions" class="suggestions"></div>
+</div>
+
+<!-- Filter Button -->
+<button id="open-filter-btn" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab open-filter-btn">
+	<i class="material-icons">filter_list</i>
+</button>
+
+<!-- Location Button -->
+<button id="current_location_btn"
+	class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect	 current_location_btn">
+	<i class="material-icons">location_on</i>
+</button>
+
+<!-- Location Button -->
+<button id="open-legend-btn" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab open-legend-btn">
+	<i class="material-icons">help</i>
+</button>
+
+
+<!-- Map Container -->
+<div id="map-container"></div>
+
+<dialog id="filter-dialog" class="mdl-dialog">
+	<h3 class="mdl-dialog__title">Filter Parking:</h3>
+	<div class="mdl-dialog__content">
+		<label>
+			<input type="radio" name="fee" value="no_filter" checked> No Filter
+		</label>
+		<label>
+			<input type="radio" name="fee" value="yes">Paid
+		</label>
+		<label>
+			<input type="radio" name="fee" value="no">Free
+		</label>
+	</div>
+	<div class="mdl-dialog__actions">
+		<button id="filter-btn" type="button"
+			class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Filter</button>
+		<button id="close-filter-btn" type="button"
+			class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Close</button>
+	</div>
+</dialog>
+
+<dialog id="legend-dialog" class="mdl-dialog">
+	<h4 class="mdl-dialog__title">Map legend:</h4>
+	<div class="mdl-dialog__content">
+		<div class="legend-item">
+			<span class="legend-icon" style="background-color: #00f;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+			<span>&nbsp; Free Parking</span>
+		</div>
+		<div class="legend-item">
+			<span class="legend-icon" style="background-color: #f00;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+			<span>&nbsp; Paid Parking</span>
+		</div>
+		<div class="legend-item">
+			<span class="legend-icon" style="background-color: #666;">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+			<span>&nbsp; Other</span>
+		</div>
+	</div>
+	<div class="mdl-dialog__actions">
+		<button id="close-legend-btn" type="button"
+			class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Close</button>
+	</div>
+</dialog>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+	let open_filter_btn = document.getElementById('open-filter-btn');
+	let close_filter_btn = document.getElementById('close-filter-btn');
+	let filter_dialog = document.getElementById('filter-dialog');
+	
+	if (!filter_dialog.showModal) {
+		dialogPolyfill.registerDialog(filter_dialog);
+	}
+	open_filter_btn.addEventListener('click', function () {
+		filter_dialog.showModal();
+	});
+	close_filter_btn.addEventListener('click', function () {
+		filter_dialog.close();
+	});
+	
+	
+	let open_legend_btn = document.getElementById('open-legend-btn');
+	let close_legend_btn = document.getElementById('close-legend-btn');
+	let legend_dialog = document.getElementById('legend-dialog');
+
+	if (!legend_dialog.showModal) {
+		dialogPolyfill.registerDialog(legend_dialog);
+	}
+
+	open_legend_btn.addEventListener('click', function () {
+		legend_dialog.showModal();
+	});
+	close_legend_btn.addEventListener('click', function () {
+		legend_dialog.close();
+	});
+</script>
+<script src="{{ url_for('static', filename='js/overpass2geojson.js') }}"></script>
+<script src="{{ url_for('static', filename='js/map4.js') }}"></script>
+
+<script>
+	// Function to check for saved search in localStorage
+	function checkSearchInLocalStorage() {
+		const currentSearch = JSON.parse(localStorage.getItem('currentSearch'));
+
+		if (currentSearch) {
+			// If a search term and coordinates are found in localStorage, use them
+			searchLat = currentSearch.lat;
+			searchLon = currentSearch.lon;
+			searchInput.value = currentSearch.term;
+			console.log("Using search from localStorage:", currentSearch.term);
+			fetchParkingData(searchLon, searchLat); // Fetch data using the stored coordinates
+		} else {
+			searchInput.value = defaultSearchTerm;
+			// If no saved search, use the default values
+			console.log("Using default search coordinates.");
+			fetchParkingData(); // Fetch data using the stored coordinates
+		}
+		map.setView([searchLat, searchLon], view_zoom);
+	}
+	// Call checkSearchInLocalStorage on page load
+	window.onload = function () {
+		checkSearchInLocalStorage();
+	};
+</script>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}History - Map App{% endblock %}
+
+{% block extra_css %}
+<style>
+	.search-table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+	.search-table th,
+	.search-table td {
+		padding: 10px;
+		text-align: left;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.search-button {
+		margin-left: 10px;
+	}
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container_div">
+	<center>
+		<h3>Search History</h3>
+	</center>
+
+	<table class="search-table">
+		<thead>
+			<tr>
+				<th>Search Term</th>
+				<th>Timestamp</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody id="history-list">
+			<!-- History items will be injected here by JavaScript -->
+		</tbody>
+	</table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+	// Load search history from local storage and display it
+	window.onload = function () {
+		const historyList = document.getElementById('history-list');
+		let searches = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
+		if (searches.length === 0) {
+			historyList.innerHTML = "<tr><td colspan='3'>No search history available.</td></tr>";
+		} else {
+			searches.forEach(search => {
+				// Create the table row
+				const row = document.createElement('tr');
+
+				// Add the search term cell
+				const searchTermCell = document.createElement('td');
+				searchTermCell.textContent = search.term;
+
+				// Add the timestamp cell
+				const timestampCell = document.createElement('td');
+				timestampCell.textContent = new Date(search.timestamp).toLocaleString();
+
+				// Add the action cell with the "Search Again" button
+				const actionCell = document.createElement('td');
+				const searchButton = document.createElement('button');
+				searchButton.classList.add('mdl-button', 'mdl-js-button', 'mdl-button--raised', 'mdl-button--colored', 'search-button');
+				searchButton.textContent = 'Search Again';
+
+				// Add the button click functionality to trigger the search again
+				searchButton.addEventListener('click', function () {
+					// Save the search data to local storage
+					localStorage.setItem('currentSearch', JSON.stringify({
+						term: search.term,
+						lat: search.lat,
+						lon: search.lon
+					}));
+
+					// Redirect to map.html
+					window.location.href = '/';  // Adjust the URL if needed
+				});
+
+				// Append cells to the row
+				actionCell.appendChild(searchButton);
+				row.appendChild(searchTermCell);
+				row.appendChild(timestampCell);
+				row.appendChild(actionCell);
+
+				// Append the row to the table body
+				historyList.appendChild(row);
+			});
+		}
+	};
+</script>
+{% endblock extra_js %}

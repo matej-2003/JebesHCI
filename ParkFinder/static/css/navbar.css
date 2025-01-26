@@ -1,0 +1,54 @@
+.mdl-bottom-navigation {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	background-color: var(--warm-white);
+	border-top: 1px solid #e0e0e0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 56px;
+	box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
+	z-index: 2000;
+}
+
+.mdl-bottom-navigation a {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	/* Arrange the icon and text vertically */
+	justify-content: center;
+	/* Vertically center the content */
+	align-items: center;
+	/* Horizontally center the content */
+	text-decoration: none;
+	color: #757575;
+	font-weight: bold;
+	position: relative;
+	padding: 10px;
+}
+
+.mdl-bottom-navigation .active {
+	color: var(--primary-blue);
+	/* Purple color for the active tab */
+}
+
+/* Add a line on top of the active tab */
+.mdl-bottom-navigation a.active::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 3px;
+	/* The height of the line */
+	background-color: var(--primary-blue);
+	/* Purple color for the active tab's underline */
+}
+
+/* Add padding at the bottom of the content to avoid overlap with the nav */
+body {
+	padding-bottom: 56px;
+}
