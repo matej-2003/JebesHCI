@@ -1,8 +1,11 @@
-## install
+## web deployment available
+https://matej-2003.github.io/HCIApp/
+
+## install for local testing
 
 - nared python virtualenv
 ```shell
-virtualenv jebesHCI
+virtualenv venv
 ```
 
 ```shell
@@ -13,13 +16,15 @@ pridobi lokalni ip
 ```shell
 ip add
 ```
-naredi certifikat
+
+meke certificate and install to you local browser for the PWA to be installable
+
 ```shell
 mkcert -key-file key.pem -cert-file cert.pem <your-ip>
 mkcert -key-file key.pem -cert-file cert.pem $(hostname -I | awk '{print $1}')
 ```
 
-naredi certifikat
+run the flask 
 ```shell
 python run.py
 ```
